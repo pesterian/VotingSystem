@@ -1,0 +1,51 @@
+Table users {
+  id bigint [primary key, increment]
+  email varchar(255) [unique, not null]
+  password varchar(255) [not null]
+  full_name varchar(255) [not null]
+  role varchar(50) [not null, note: 'ADMIN or VOTER']
+  city varchar(100) [null, note: 'Only for voters - used for assignment']
+  is_assigned boolean [default: false, note: 'Only for voters']
+  created_at timestamp [default: `now()`]
+  
+  Note: 'Single table inheritance - contains both Admin and Voter data'
+}
+
+Table elections {
+  id bigint [primary key, increment]
+  title varchar(255) [not null]
+  description text [not null]
+  start_time timestamp [not null]
+  end_time timestamp [not null]
+  created_at timestamp [default: `now()`]
+}
+
+Table candidates {
+  id bigint [primary key, increment]
+  name varchar(255) [not null]
+  description text
+  party varchar(100)
+  election_id bigint [not null, ref: > elections.id]
+  created_at timestamp [default: `now()`]
+  
+  indexes {
+    (election_id, name) [unique, note: 'Prevent duplicate candidates per election']
+  }
+}
+
+Table votes {
+  id bigint [primary key, increment]
+  voter_id bigint [not null, ref: > users.id]
+  candidate_id bigint [not null, ref: > candidates.id]
+  election_id bigint [not null, ref: > elections.id]
+  voted_at timestamp [default: `now()`]
+  
+  indexes {
+    (voter_id, election_id) [unique, note: 'One vote per voter per election']
+  }
+}
+
+Ref: candidates.election_id > elections.id [delete: cascade]
+Ref: votes.voter_id > users.id [delete: cascade]
+Ref: votes.candidate_id > candidates.id [delete: cascade]
+Ref: votes.election_id > elections.id [delete: cascade]
