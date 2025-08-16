@@ -7,8 +7,6 @@ Table users {
   city varchar(100) [null, note: 'Only for voters - used for assignment']
   is_assigned boolean [default: false, note: 'Only for voters']
   created_at timestamp [default: `now()`]
-  
-  Note: 'Single table inheritance - contains both Admin and Voter data'
 }
 
 Table elections {
