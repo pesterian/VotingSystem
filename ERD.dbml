@@ -44,8 +44,3 @@ Table votes {
     (voter_id, election_id) [unique, note: 'One vote per voter per election']
   }
 }
-
-Ref: candidates.election_id > elections.id [delete: cascade]
-Ref: votes.voter_id > users.id [delete: cascade]
-Ref: votes.candidate_id > candidates.id [delete: cascade]
-Ref: votes.election_id > elections.id [delete: cascade]
